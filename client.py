@@ -1,6 +1,7 @@
-import socket
+from socket import AF_INET, socket, SOCK_STREAM
+from threading import Thread
 
-def status():
+def status():  # функция для аутентификации
     stat = input('Are you registered user? y/n? Press any key to quit\n')
     global answer
     if stat == "y":
@@ -19,15 +20,30 @@ def status():
 
 status()
 
-HOST = 'localhost'
+def receive():
+    """Обрабатывает прием сообщений."""
+    while True:
+        try:
+            print(client_socket.recv(BUFSIZ).decode("utf8"))
+        except OSError:  # Возможно, клиент покинул чат.
+            break
+
+def send():
+    """Обрабатываем отправку сообщения"""
+    msg = input()
+    client_socket.send(bytes(msg, "utf8"))
+    if msg == "{quit}":
+        client_socket.close()
+
 PORT = 9999
 BUFSIZ = 1024
+HOST = 'localhost'
 ADDR = (HOST, PORT)
 
-tcpCliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-tcpCliSock.connect(ADDR)
-
-tcpCliSock.send(answer.encode())  # отправка данных в bytes
-data = tcpCliSock.recv(BUFSIZ)
-print(data.decode('utf8'))
-tcpCliSock.close()
+client_socket = socket(AF_INET, SOCK_STREAM)
+client_socket.connect(ADDR)
+client_socket.send(answer.encode())
+receive_thread = Thread(target=receive)
+send_thread = Thread(target=send)
+send_thread.start()
+receive_thread.start()

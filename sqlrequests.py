@@ -1,6 +1,7 @@
 import sqlite3, time
 
-db = sqlite3.connect('chat.db')
+db = sqlite3.connect('chat.db', check_same_thread = False)
+
 cursor = db.cursor()
 
 def add_user(login, name, passw):
@@ -27,7 +28,21 @@ def add_messege(messege, date, name):
                    )
     db.commit()
 
+def find_nickname(login):
+    chek_login = cursor.execute('''SELECT user_name FROM users WHERE login = ? ''', (login,))
+    return chek_login.fetchall()[0][0]
 
+def find_login(nick):
+    chek_nick = cursor.execute('''SELECT login FROM users WHERE user_name = ? ''', (nick,))
+    return chek_nick.fetchall()[0][0]
+
+def message_history():
+    msg_story = cursor.execute('''SELECT * FROM chat ''')
+    tex = ''
+    for _ in msg_story.fetchall():
+        ms = _[2], _[3], _[1].decode()
+        tex += str(ms)
+    return tex
 
 
 
