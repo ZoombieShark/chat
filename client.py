@@ -1,43 +1,33 @@
-"""Script for Tkinter GUI chat client."""
-from socket import AF_INET, socket, SOCK_STREAM
-from threading import Thread
+import socket
 
-def receive():
-    """Handles receiving of messages."""
-    while True:
-        try:
-            msg = client_socket.recv(BUFSIZ).decode("utf8")
-            print(msg)
-        except OSError:  # Possibly client has left the chat.
-            break
+def status():
+    stat = input('Are you registered user? y/n? Press any key to quit\n')
+    global answer
+    if stat == "y":
+        login = input("Enter login name: ")
+        passw = input("Enter password: ")
+        answer = stat, login, passw
+    elif stat == "n":
+        login = input("Create login name: ")
+        nick = input("Create nickname: ")
+        passw = input("Enter password: ")
+        answer = stat, login, nick, passw
+    else:
+        quit()
+    answer = ','.join(answer)
+    return answer
 
-def send(event=None):  # event is passed by binders.
-    """Handles sending of messages."""
-    msg = my_msg.get()
-    my_msg.set("")  # Clears input field.
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
-        client_socket.close()
-        top.quit()
+status()
 
-def on_closing(event=None):
-    """This function is to be called when the window is closed."""
-    my_msg.set("{quit}")
-    send()
-
-#----Now comes the sockets part----
-HOST = '192.168.100.2'  #input('Enter host: ')
-PORT = 33000 #input('Enter port: ')
-if not PORT:
-    PORT = 33000
-else:
-    PORT = int(PORT)
-
+HOST = 'localhost'
+PORT = 9999
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 
-client_socket = socket(AF_INET, SOCK_STREAM)
-client_socket.connect(ADDR)
+tcpCliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpCliSock.connect(ADDR)
 
-receive_thread = Thread(target=receive)
-receive_thread.start()
+tcpCliSock.send(answer.encode())  # отправка данных в bytes
+data = tcpCliSock.recv(BUFSIZ)
+print(data.decode('utf8'))
+tcpCliSock.close()

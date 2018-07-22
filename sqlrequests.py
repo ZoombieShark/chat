@@ -5,7 +5,7 @@ cursor = db.cursor()
 
 def add_user(login, name, passw):
     chek_login = cursor.execute('''SELECT login FROM users WHERE login = ? ''',(login,))
-    if chek_login.fetchone()[0] == login:
+    if chek_login.fetchone() == (login, ):
         return False
     else:
         cursor.execute('''INSERT INTO users(login, user_name, password, date_of_registration)
@@ -26,7 +26,6 @@ def add_messege(messege, date, name):
                        ''', (messege, date, name)
                    )
     db.commit()
-
 
 
 
