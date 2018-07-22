@@ -30,10 +30,12 @@ def receive():
 
 def send():
     """Обрабатываем отправку сообщения"""
-    msg = input()
-    client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
-        client_socket.close()
+    while True:
+        msg = input()
+        client_socket.send(bytes(msg, "utf8"))
+        if msg == "{quit}":
+            client_socket.close()
+            break
 
 PORT = 9999
 BUFSIZ = 1024
