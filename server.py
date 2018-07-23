@@ -13,8 +13,6 @@ addresses = {}  # словарь адрессов
 tcpSerSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # создает TCP/IP сокет сервера
 tcpSerSock.bind(ADDR)  # связываем сокет с адресом
 
-  # слушаем клиентов
-
 def accept_incoming_connections():
     while True:
         '''Устанавливаем обработку клиентов'''
@@ -61,7 +59,7 @@ def handle_client(client, nick):  # берём сокет клиента и ни
         sqlrequests.add_messege(msg, itstime, sqlrequests.find_login(nick))  # добавляем в SQLite новое сообщение
         print(nick, msg)
         if msg == bytes("{msg}", "utf8"):
-            client.send(bytes((sqlrequests.message_history()), 'utf8')) # отправляем историю сообщений клиенту
+            client.send(bytes((sqlrequests.message_history()), 'utf8'))  # отправляем историю сообщений клиенту
         elif msg != bytes("{quit}", "utf8"):
             broadcast(msg, nick + ": ")
         else:

@@ -39,7 +39,7 @@ def send():
 
 PORT = 9999
 BUFSIZ = 1024
-HOST = 'localhost'
+HOST = 'localhost'  # ip сервера
 ADDR = (HOST, PORT)
 
 client_socket = socket(AF_INET, SOCK_STREAM)
