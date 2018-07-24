@@ -13,8 +13,9 @@ def status():  # функция для аутентификации
         nick = input("Create nickname: ")
         passw = input("Enter password: ")
         answer = stat, login, nick, passw
+
     else:
-        quit()
+        return quit()
     answer = ','.join(answer)
     return answer
 
@@ -22,11 +23,17 @@ status()
 
 def receive():
     """Обрабатывает прием сообщений."""
+    client_socket.send(answer.encode())
+    if client_socket.recv(BUFSIZ) == bytes('Authentication Error', 'utf-8'):
+        print('Authentication Error')
+        client_socket.close()
     while True:
         try:
             print(client_socket.recv(BUFSIZ).decode("utf8"))
         except OSError:  # Возможно, клиент покинул чат.
-            break
+            quit()
+
+
 
 def send():
     """Обрабатываем отправку сообщения"""
@@ -37,6 +44,7 @@ def send():
             client_socket.close()
             quit()
 
+
 PORT = 9999
 BUFSIZ = 1024
 HOST = 'localhost'  # ip сервера
@@ -44,8 +52,10 @@ ADDR = (HOST, PORT)
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect(ADDR)
-client_socket.send(answer.encode())
+
 receive_thread = Thread(target=receive)
 send_thread = Thread(target=send)
 send_thread.start()
 receive_thread.start()
+
+

@@ -45,4 +45,3 @@ def message_history():
     return tex
 
 
-
