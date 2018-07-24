@@ -35,7 +35,7 @@ def send():
         client_socket.send(bytes(msg, "utf8"))
         if msg == "{quit}":
             client_socket.close()
-            break
+            quit()
 
 PORT = 9999
 BUFSIZ = 1024

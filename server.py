@@ -54,25 +54,30 @@ def handle_client(client, nick):  # берём сокет клиента и ни
     clients[client] = nick
 
     while True:
-        msg = client.recv(BUFSIZ)
-        itstime = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())  # время
-        sqlrequests.add_messege(msg, itstime, sqlrequests.find_login(nick))  # добавляем в SQLite новое сообщение
-        print(nick, msg)
-        if msg == bytes("{msg}", "utf8"):
-            client.send(bytes((sqlrequests.message_history()), 'utf8'))  # отправляем историю сообщений клиенту
-        elif msg != bytes("{quit}", "utf8"):
-            broadcast(msg, nick + ": ")
-        else:
-            client.send(bytes("{quit}", "utf8"))
+        try:
+            msg = client.recv(BUFSIZ)
+            itstime = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())  # время
+            sqlrequests.add_messege(msg, itstime, sqlrequests.find_login(nick))  # добавляем в SQLite новое сообщение
+            if msg == bytes("{msg}", "utf8"):
+                client.send(bytes((sqlrequests.message_history()), 'utf8'))  # отправляем историю сообщений клиенту
+            elif msg != bytes("{quit}", "utf8"):
+                broadcast(msg, nick + ": ")
+            else:
+                client.close()
+                del clients[client]
+                broadcast(bytes("%s has left the chat." % nick, "utf8"))
+                break
+        except:
             client.close()
-            del clients[client]
-            broadcast(bytes("%s has left the chat." % nick, "utf8"))
-            break
+            pass
 
 def broadcast(msg, prefix=""):  # префикс для индификации имени
     """Отправлят всем клиентам сообщение от клиента"""
     for sock in clients:
-        sock.send(bytes(prefix, "utf8") + msg)
+        try:
+            sock.send(bytes(prefix, "utf8") + msg)
+        except:
+            pass
 
 
 
