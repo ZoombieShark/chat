@@ -4,7 +4,7 @@ import threading
 import time
 
 HOST = ""  # адрес сервера
-PORT = 9999  # номер порта от 1024 до 65525
+PORT = 9997  # номер порта от 1024 до 65525
 BUFSIZ = 1024  # размер буфера 1 Кбайт
 ADDR = (HOST, PORT)  # адрес сервера
 clients = {}  # словарь пользователей онлайн
@@ -87,13 +87,15 @@ def broadcast(msg, prefix=""):  # префикс для индификации �
 
 
 if __name__ == "__main__":
-    tcpSerSock.listen(5)
-    print("Waiting for connection...")
-    ACCEPT_THREAD = threading.Thread(target=accept_incoming_connections)
-    ACCEPT_THREAD.start()
-    ACCEPT_THREAD.join()
-    tcpSerSock.close()
-
+    try:
+        tcpSerSock.listen(5)
+        print("Waiting for connection...")
+        ACCEPT_THREAD = threading.Thread(target=accept_incoming_connections)
+        ACCEPT_THREAD.start()
+        ACCEPT_THREAD.join()
+        tcpSerSock.close()
+    except KeyboardInterrupt:
+        exit(0)
 
 
 
