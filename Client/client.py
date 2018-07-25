@@ -1,5 +1,11 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import json
+
+with open('ClientConfig', 'r') as config:
+    pObj = json.load(config)
+    HOST = pObj['SERVER'][0]['HOST']
+    PORT = pObj['SERVER'][1]['PORT']
 
 def status():  # функция для аутентификации
     stat = input('Are you registered user? y/n? Press any key to quit\n')
@@ -13,7 +19,6 @@ def status():  # функция для аутентификации
         nick = input("Create nickname: ")
         passw = input("Enter password: ")
         answer = stat, login, nick, passw
-
     else:
         return quit()
     answer = ','.join(answer)
@@ -45,17 +50,17 @@ def send():
         client_socket.close()
         quit()
 
-HOST = input('Enter host: ')
-PORT = input('Enter port: ')
+#HOST = input('Enter host: ')
+#PORT = input('Enter port: ')
 status()
 
-if not PORT:
-    PORT = 9997
-else:
-    PORT = int(PORT)
+#if not PORT:
+#    PORT = 9997
+#else:
+#    PORT = int(PORT)
 
 BUFSIZ = 1024
-ADDR = (HOST, PORT)
+ADDR = (HOST, int(PORT))
 
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect(ADDR)

@@ -1,13 +1,21 @@
 import socket
-import sqlrequests
+from Server import sqlrequests
 import threading
 import time
 import json
 
-HOST = ""  # адрес сервера
-PORT = 9997  # номер порта от 1024 до 65525
+with open('ServerConfig', 'r') as config:
+    pObj = json.load(config)
+    HOST = pObj['SERVER'][0]['HOST']
+    PORT = pObj['SERVER'][1]['PORT']
+    LISTEN = pObj['SERVER'][2]['LISTEN']
+
+#HOST = ""  # адрес сервера
+#PORT = 9997  # номер порта от 1024 до 65525
+#LISTEN = 5
+
 BUFSIZ = 1024  # размер буфера 1 Кбайт
-ADDR = (HOST, PORT)  # адрес сервера
+ADDR = (HOST, int(PORT))  # адрес сервера
 clients = {}  # словарь пользователей онлайн
 addresses = {}  # словарь адрессов
 
@@ -86,10 +94,9 @@ def broadcast(msg, prefix=""):  # префикс для индификации �
         except:
             pass
 
-
 if __name__ == "__main__":
     try:
-        tcpSerSock.listen(5)
+        tcpSerSock.listen(int(LISTEN))
         print("Waiting for connection...")
         ACCEPT_THREAD = threading.Thread(target=accept_incoming_connections)
         ACCEPT_THREAD.start()

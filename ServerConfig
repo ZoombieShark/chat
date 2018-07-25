@@ -1,0 +1,13 @@
+{
+  "SERVER": [
+    {
+      "HOST": "localhost"
+    },
+    {
+      "PORT": "9999"
+    },
+    {
+      "LISTEN": "5"
+    }
+  ]
+}
