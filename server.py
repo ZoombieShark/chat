@@ -2,6 +2,7 @@ import socket
 import sqlrequests
 import threading
 import time
+import json
 
 HOST = ""  # адрес сервера
 PORT = 9997  # номер порта от 1024 до 65525
